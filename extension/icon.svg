@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f6ef7"/>
+      <stop offset="100%" stop-color="#7c8ff5"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- Document outline -->
+  <path d="M38 28A8 8 0 0146 20H76L90 34V100A8 8 0 0182 108H46A8 8 0 0138 100V28Z"
+        fill="white" fill-opacity="0.18" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Folded corner -->
+  <path d="M76 20L90 34H80A4 4 0 0176 30V20Z" fill="white" fill-opacity="0.35"/>
+  <!-- Lightning bolt (AI spark) through the document -->
+  <path d="M67 46L57 70H67L61 90L75 62H65L71 46Z"
+        fill="white" stroke="white" stroke-width="1" stroke-linejoin="round"/>
+</svg>

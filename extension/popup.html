@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrantAssistant</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 300px;
+      background: #f8f9fc;
+      color: #1e2a3a;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+    }
+
+    /* ── Header band ── */
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #dde3f0;
+      padding: 16px 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Logo mark */
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #4f6ef7 0%, #7c8ff5 100%);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(79,110,247,0.30);
+    }
+
+    .logo-mark svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .logo-text {
+      line-height: 1;
+    }
+
+    .logo-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e2a3a;
+      letter-spacing: -0.01em;
+    }
+
+    .logo-tagline {
+      font-size: 0.62rem;
+      color: #6b7a99;
+      margin-top: 2px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Body ── */
+    .body {
+      padding: 16px 18px 18px;
+    }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+
+    .user-email {
+      font-size: 0.78rem;
+      color: #374151;
+      margin-bottom: 14px;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+    }
+
+    .subtitle {
+      font-size: 0.78rem;
+      color: #6b7a99;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 8px;
+      transition: background 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #4f6ef7;
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 6px rgba(79,110,247,0.28);
+    }
+    .btn-primary:hover { background: #3b5bdb; box-shadow: 0 3px 10px rgba(79,110,247,0.35); }
+
+    .btn-outline {
+      background: #fff;
+      color: #4f6ef7;
+      border: 1px solid #c5cff5;
+    }
+    .btn-outline:hover { background: #eef1f8; }
+
+    .btn-ghost {
+      background: transparent;
+      color: #9ca3af;
+      border: 1px solid #e5e7eb;
+      font-size: 0.72rem;
+    }
+    .btn-ghost:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+
+    .loading {
+      color: #6b7a99;
+      font-size: 0.78rem;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    /* Footer strip */
+    .footer {
+      border-top: 1px solid #eef1f8;
+      padding: 8px 18px;
+      font-size: 0.6rem;
+      color: #a0aec0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+    }
+
+    #state-unauthenticated, #state-authenticated { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Header (always visible) -->
+  <div class="header">
+    <div class="logo-mark">
+      <!-- Document + spark icon -->
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 3.5A1.5 1.5 0 015.5 2h6.086a1.5 1.5 0 011.06.44l2.915 2.914A1.5 1.5 0 0116 6.414V16.5A1.5 1.5 0 0114.5 18h-9A1.5 1.5 0 014 16.5v-13z" fill="white" fill-opacity="0.25"/>
+        <path d="M5.5 2H11.5V6.5H16" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 3.5A1.5 1.5 0 015.5 2h6.086a1.5 1.5 0 011.06.44l2.915 2.914A1.5 1.5 0 0116 6.414V16.5A1.5 1.5 0 0114.5 18h-9A1.5 1.5 0 014 16.5v-13z" stroke="white" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M10.5 8.5L9 12H11L9.5 15.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name">GrantAssistant</div>
+      <div class="logo-tagline">NIH SciENcv · AI Compliance</div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <div id="state-loading" class="loading">Loading…</div>
+
+    <!-- Unauthenticated -->
+    <div id="state-unauthenticated">
+      <p class="subtitle">Sign in to activate AI trimming and citation selection on your SciENcv pages.</p>
+      <button class="btn btn-primary" id="btn-signin">Sign in with Google</button>
+    </div>
+
+    <!-- Authenticated -->
+    <div id="state-authenticated">
+      <div class="status-pill"><span class="status-dot"></span> Connected</div>
+      <p class="user-email" id="user-email"></p>
+      <button class="btn btn-outline" id="btn-dashboard">View Dashboard ↗</button>
+      <button class="btn btn-ghost" id="btn-signout">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="footer">grantassistant.app</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

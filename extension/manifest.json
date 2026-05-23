@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "GrantAssistant — SciENcv Assistant",
+  "version": "1.0.0",
+  "description": "AI-powered trimming and citation selection for NIH SciENcv. Compliance audit trail included.",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": [
+    "https://www.ncbi.nlm.nih.gov/*",
+    "https://YOUR_VERCEL_URL/*",
+    "http://localhost:3000/*"
+  ],
+  "icons": {
+    "16":  "icon.svg",
+    "48":  "icon.svg",
+    "128": "icon.svg"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.ncbi.nlm.nih.gov/labs/sciencv/*",
+        "https://www.ncbi.nlm.nih.gov/myncbi/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    },
+    {
+      "matches": [
+        "https://YOUR_VERCEL_URL/auth/extension-login*",
+        "http://localhost:3000/auth/extension-login*"
+      ],
+      "js": ["auth-listener.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.svg"
+  }
+}

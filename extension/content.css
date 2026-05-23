@@ -1,0 +1,137 @@
+/* GrantAssistant injected UI — light theme, ga- prefix prevents SciENcv conflicts */
+
+.ga-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 2px;
+  flex-wrap: wrap;
+}
+
+.ga-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 11px;
+  background: #4f6ef7;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 99999;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(79,110,247,0.28);
+  transition: background 0.12s;
+}
+
+.ga-btn:hover {
+  background: #3b5bdb;
+}
+
+.ga-btn:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ga-btn--secondary {
+  background: #ffffff;
+  color: #4f6ef7;
+  border: 1px solid #c5cff5;
+  box-shadow: none;
+}
+
+.ga-btn--secondary:hover {
+  background: #eef1fd;
+}
+
+.ga-btn--secondary:disabled {
+  background: #f3f4f6;
+  color: #a0aec0;
+  border-color: #e5e7eb;
+}
+
+.ga-tooltip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px;
+  animation: ga-fade 3.5s forwards;
+  z-index: 99999;
+  position: relative;
+  pointer-events: none;
+}
+
+.ga-tooltip--success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.ga-tooltip--error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.ga-tooltip--info    { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+
+@keyframes ga-fade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Citation panel */
+.ga-citation-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  background: #f8f9fc;
+  border: 1px solid #dde3f0;
+  border-radius: 7px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  z-index: 99999;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.ga-citation-label {
+  font-size: 11px;
+  color: #4f6ef7;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ga-citation-input {
+  flex: 1;
+  padding: 5px 9px;
+  background: #ffffff;
+  border: 1px solid #dde3f0;
+  border-radius: 4px;
+  color: #1e2a3a;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.ga-citation-input:focus {
+  outline: none;
+  border-color: #4f6ef7;
+  box-shadow: 0 0 0 2px rgba(79,110,247,0.12);
+}
+
+/* Highlighted citation row */
+.ga-highlight {
+  border-left: 3px solid #4f6ef7 !important;
+  padding-left: 8px !important;
+  background: rgba(79,110,247,0.05) !important;
+}
+
+.ga-reason-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 7px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}

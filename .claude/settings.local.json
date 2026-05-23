@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Read(//usr/local/**)",
+      "Read(//usr/**)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(npm install *)",
+      "Bash(where node *)",
+      "Bash(where npm *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
