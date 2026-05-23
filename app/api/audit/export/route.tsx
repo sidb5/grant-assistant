@@ -243,7 +243,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Provide ?id=X or ?all=true' }, { status: 400 })
   }
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
