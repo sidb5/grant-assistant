@@ -18,6 +18,29 @@ NIH's SciENcv enforces tight character limits on biosketch fields and asks resea
 
 ---
 
+## Screenshots
+
+### Audit Dashboard
+Track every Trim and Citation action with one-click PDF export.
+
+![Audit dashboard showing trim and citation records](docs/screenshots/dashboard.png)
+
+### ⚡ Text Trimming — Before & After
+The Trim button appears below any editable textarea in SciENcv. After trimming, a success tooltip shows the character reduction and the Revert button activates.
+
+![Personal Statement field with Trim button ready](docs/screenshots/trim-before.png)
+
+![Personal Statement after trim — tooltip shows 7678 → 822 chars](docs/screenshots/trim-after.png)
+
+### 🎯 Citation Ranker
+The GrantAssistant panel appears in the Contribution to Science section. Enter a grant title and click **Find Best 4** to get ranked results with relevance reasons.
+
+![Citation panel before a search is run](docs/screenshots/citations-empty.png)
+
+![Citation ranker results showing 4 ranked papers with relevance reasons](docs/screenshots/citations-results.png)
+
+---
+
 ## Architecture Overview
 
 ```
