@@ -2,7 +2,7 @@
 // needed for token access. MV3 service workers can be terminated at any time,
 // making message-based token retrieval unreliable from the popup.
 
-const APP_URL = 'http://localhost:3000'; // REPLACE BEFORE DEPLOY
+const APP_URL = 'https://grant-assistant-omega.vercel.app';
 
 // ── Storage helpers ──────────────────────────────────────────────────────────
 

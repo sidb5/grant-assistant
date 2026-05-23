@@ -6,8 +6,7 @@
   "permissions": ["storage", "activeTab", "tabs"],
   "host_permissions": [
     "https://www.ncbi.nlm.nih.gov/*",
-    "https://YOUR_VERCEL_URL/*",
-    "http://localhost:3000/*"
+    "https://grant-assistant-omega.vercel.app/*"
   ],
   "icons": {
     "16":  "icon.svg",
@@ -28,8 +27,7 @@
     },
     {
       "matches": [
-        "https://YOUR_VERCEL_URL/auth/extension-login*",
-        "http://localhost:3000/auth/extension-login*"
+        "https://grant-assistant-omega.vercel.app/auth/extension-login*"
       ],
       "js": ["auth-listener.js"]
     }

@@ -1,6 +1,6 @@
 // ─── Section A: Utilities ────────────────────────────────────────────────────
 
-const APP_URL = 'http://localhost:3000'; // REPLACE BEFORE DEPLOY
+const APP_URL = 'https://grant-assistant-omega.vercel.app';
 
 async function getToken() {
   return new Promise((resolve) => {
