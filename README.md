@@ -1,107 +1,246 @@
-# BiotechOS SciENcv Suite
+# GrantAssistant — SciENcv AI Copilot
 
-AI-powered text trimming and citation selection for NIH's SciENcv tool, with a full compliance audit trail.
+> AI-powered text trimming and citation ranking for NIH SciENcv, with a built-in compliance audit trail for grant submissions.
+
+**Live app:** [grant-assistant-omega.vercel.app](https://grant-assistant-omega.vercel.app)
 
 ---
 
-## 1. Local Development Setup
+## What It Does
 
-**Prerequisites:** Node.js 18+, npm
+NIH's SciENcv enforces tight character limits on biosketch fields and asks researchers to select their most relevant publications for each grant. GrantAssistant adds two superpowers directly inside SciENcv:
+
+| Feature | What it does |
+|---|---|
+| **⚡ Trim** | Reduces a Personal Statement or Contribution description to fit the character limit — removing words without changing scientific claims |
+| **🎯 Citation Ranker** | Given a grant title, ranks your My Bibliography papers and highlights the best four for that specific application |
+| **📄 Audit Export** | Generates a signed PDF for every AI action, certifying that AI was used only for formatting/ranking — not for writing new science |
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────┐
+│  Chrome Extension (MV3, vanilla JS) │
+│  content.js injects UI into SciENcv │
+│  popup.js handles sign-in/sign-out  │
+└──────────────┬──────────────────────┘
+               │ Bearer token (JWT, 1 hr)
+               ▼
+┌─────────────────────────────────────┐
+│  Next.js 14 App Router on Vercel    │
+│  /api/trim       → Claude AI        │
+│  /api/citations  → Claude AI        │
+│  /api/audit      → Supabase         │
+│  /api/audit/export → PDF via        │
+│                    @react-pdf       │
+│  /api/me         → Supabase profile │
+└──────────────┬──────────────────────┘
+               │ service-role client
+               ▼
+┌─────────────────────────────────────┐
+│  Supabase (Postgres + Google OAuth) │
+│  profiles table  (RLS enabled)      │
+│  audit_records table (RLS enabled)  │
+└─────────────────────────────────────┘
+```
+
+**Security model in one sentence:** The Anthropic API key never leaves the server. The extension stores only a short-lived Supabase session token. Every API route validates that token before doing anything.
+
+---
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+- An [Anthropic API key](https://console.anthropic.com)
+- A Google Cloud OAuth 2.0 client (for sign-in)
+
+### 1. Clone and install
 
 ```bash
+git clone https://github.com/sidb5/grant-assistant.git
+cd grant-assistant
 npm install
 cp .env.local.example .env.local
-# Fill in the values in .env.local (see section 3 below)
+```
+
+### 2. Configure Supabase
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. In the SQL Editor, run `supabase/schema.sql` to create all tables and RLS policies
+3. Go to **Authentication → Providers → Google** and enable Google OAuth
+   - You'll need a Google Cloud OAuth client ID and secret
+4. In **Authentication → URL Configuration → Redirect URLs**, add:
+   ```
+   http://localhost:3000/api/auth/callback
+   https://grant-assistant-omega.vercel.app/api/auth/callback
+   ```
+
+### 3. Fill in `.env.local`
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+ANTHROPIC_API_KEY=sk-ant-...
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### 4. Run the dev server
+
+```bash
 npm run dev
 ```
 
-**Supabase setup:**
-1. Create a new project at [supabase.com](https://supabase.com)
-2. In the Supabase SQL Editor, run the contents of `supabase/schema.sql`
-3. Go to **Authentication → Providers** and enable **Google**
-4. Add the OAuth callback URL to your Google Cloud Console OAuth app:
-   `https://<your-project>.supabase.co/auth/v1/callback`
-5. Also add `http://localhost:3000/api/auth/callback` to your Supabase **Redirect URLs** (Auth → URL Configuration)
-6. Copy your project URL, anon key, and service role key into `.env.local`
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 2. Loading the Chrome Extension
+## Loading the Chrome Extension
 
-1. Open `chrome://extensions` in Chrome
-2. Enable **Developer Mode** (toggle in top right)
-3. Click **Load unpacked**
-4. Select the `/extension` folder from this project
-5. Before using, update the `APP_URL` constant in both `extension/background.js` and `extension/content.js` to match your local (`http://localhost:3000`) or deployed URL
+1. Open `chrome://extensions`
+2. Enable **Developer Mode** (toggle, top-right)
+3. Click **Load unpacked** → select the `/extension` folder
+4. The GrantAssistant icon appears in your toolbar
 
-**During development:** `APP_URL = 'http://localhost:3000'` — the manifest already includes `http://localhost:3000/*` in `host_permissions` and the `auth-listener` content script matches for local development.
-
----
-
-## 3. Required Environment Variables
-
-| Variable | Description | Where to find it |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Supabase dashboard → Settings → API |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key | Supabase dashboard → Settings → API |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) | Supabase dashboard → Settings → API |
-| `ANTHROPIC_API_KEY` | Anthropic API key | [console.anthropic.com](https://console.anthropic.com) |
-| `NEXT_PUBLIC_APP_URL` | Full URL of this app | `http://localhost:3000` locally, your Vercel URL in production |
-
-**Never commit `.env.local` to version control.** The service role key and Anthropic API key must remain server-side only.
+The extension is pre-configured to point at the production app (`https://grant-assistant-omega.vercel.app`). If you want to test against local dev, change `APP_URL` in `extension/background.js`, `extension/content.js`, and `extension/popup.js` to `http://localhost:3000` and reload the extension.
 
 ---
 
-## 4. Deploying to Vercel
+## Using the Extension on SciENcv
+
+1. Navigate to [ncbi.nlm.nih.gov/myncbi](https://www.ncbi.nlm.nih.gov/myncbi/) and open your CV
+2. Click the GrantAssistant icon → **Sign in with Google**
+3. Complete Google OAuth in the new tab — the popup auto-updates when done
+
+**Text trimming:**
+- Click **Edit** on any biosketch field (e.g. Personal Statement)
+- An **⚡ Trim** button appears below the textarea
+- If the text exceeds the limit (2,500 chars for Personal Statement), Trim condenses it and enables **↩ Revert** so you can undo instantly
+
+**Citation ranking:**
+- Go to the **Citations** section of your biosketch
+- The **🎯 GrantAssistant** panel appears above your bibliography
+- Type your grant title and click **Find Best 4**
+- The four most relevant papers are highlighted with a relevance reason
+
+**Audit trail:**
+- Every Trim and Citation action is logged to your dashboard at [grant-assistant-omega.vercel.app/dashboard](https://grant-assistant-omega.vercel.app/dashboard)
+- Download individual or all-records PDFs as compliance documentation
+
+---
+
+## Deploying to Vercel
 
 ```bash
-vercel deploy
+vercel deploy --prod
 ```
 
-After deploying:
-1. Set all environment variables in the Vercel dashboard (Settings → Environment Variables)
-2. Update `APP_URL` in `extension/background.js` and `extension/content.js` to your production Vercel URL (e.g. `https://biotechos.vercel.app`)
-3. Update `host_permissions` and the `auth-listener` content script `matches` in `extension/manifest.json` to include your production URL
-4. Update `NEXT_PUBLIC_APP_URL` in Vercel env vars to your production URL
-5. Add your production URL to Supabase Auth → URL Configuration → Redirect URLs:
-   `https://your-app.vercel.app/api/auth/callback`
-6. Reload the extension from `chrome://extensions`
+Set these environment variables in the Vercel dashboard (**Settings → Environment Variables**):
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key |
+| `NEXT_PUBLIC_APP_URL` | `https://grant-assistant-omega.vercel.app` |
 
 ---
 
-## 5. Architecture Notes
+## Project Structure
 
-### Why the Anthropic API key lives only in the backend
+```
+grant-assistant/
+├── app/
+│   ├── api/
+│   │   ├── trim/route.ts          # POST — trims text to char limit via Claude
+│   │   ├── citations/route.ts     # POST — ranks publications for a grant
+│   │   ├── audit/route.ts         # GET — fetch audit records
+│   │   ├── audit/export/route.tsx # GET — export audit records as PDF
+│   │   ├── auth/callback/route.ts # GET — Supabase OAuth callback
+│   │   └── me/route.ts            # GET — authenticated user profile
+│   ├── auth/extension-login/      # OAuth landing page for the extension
+│   ├── dashboard/                 # Audit trail dashboard UI
+│   └── page.tsx                   # Landing page
+├── components/
+│   └── dashboard/
+│       ├── AuditTable.tsx
+│       └── TestPanel.tsx          # Dev-only API test panel
+├── extension/
+│   ├── manifest.json              # MV3 manifest
+│   ├── background.js              # Service worker — token storage
+│   ├── popup.html / popup.js      # Extension popup
+│   ├── content.js                 # Injected into SciENcv pages
+│   ├── auth-listener.js           # Captures token on extension-login page
+│   └── content.css
+├── lib/
+│   ├── anthropic.ts               # Lazy Anthropic client factory
+│   ├── supabase.ts                # Service role + token validation helpers
+│   └── pubmed.ts                  # PubMed fetch utilities
+├── supabase/
+│   └── schema.sql                 # All tables + RLS policies
+└── next.config.js                 # CORS headers for /api/* routes
+```
 
-The Anthropic API key grants full billing access to your account. Exposing it in client-side code or the Chrome extension would allow any visitor to extract it and incur charges. All AI calls flow through Next.js API routes (`/api/trim`, `/api/citations`) which run server-side on Vercel and never transmit the key to the browser.
+---
 
-### Why tokens are stored in `chrome.storage.local` (not API keys)
+## Auth Flow (Extension → Web App → Supabase)
 
-The Chrome extension stores only the user's Supabase session token — a short-lived JWT that grants access only to that user's own data. If extracted, it expires within 1 hour and can only access that user's records. It cannot be used to call the Anthropic API directly. The token is never stored in `localStorage` (accessible to any page script) — only in `chrome.storage.local` (accessible only to this extension).
+```
+1. User clicks "Sign In" in popup
+2. Extension opens /auth/extension-login in a new tab
+3. Page redirects → Google OAuth via Supabase
+4. Google redirects → /api/auth/callback
+5. Callback exchanges code, upserts profile, redirects to /auth/extension-login
+6. Page posts: window.postMessage({ type: 'GRANT_ASSISTANT_AUTH', token })
+7. auth-listener.js content script forwards token to background via chrome.runtime.sendMessage
+8. Background stores token in chrome.storage.local with 1-hour expiry
+9. popup.js polls storage every 500 ms and updates UI on token arrival
+```
 
-### How the audit trail provides NIH compliance documentation
+---
 
-Every call to `/api/trim` or `/api/citations` inserts a row into the `audit_records` table recording what was submitted, what AI returned, and a diff summary. Users can export individual records or all records as a signed PDF from the dashboard. The PDF includes a certification statement clarifying that AI was used only for formatting/ranking — not for generating scientific content. This provides a defensible paper trail if NIH ever questions the use of AI assistance in grant preparation.
+## Why the Audit Trail Matters
 
-### Auth flow for the Chrome extension
+NIH's NOT-OD-23-149 guidance requires researchers to acknowledge AI use in grant applications. GrantAssistant creates a PDF record for every AI action that certifies:
 
-1. User clicks "Sign in with Google" in the popup
-2. Extension opens `APP_URL/auth/extension-login` in a new tab
-3. The page redirects to Google OAuth via Supabase
-4. After approval, Google redirects to `/api/auth/callback`, which exchanges the code, upserts the user profile, and redirects back to `/auth/extension-login`
-5. The page now has a valid session; it calls `window.postMessage({ type: 'BIOTECH_OS_AUTH', token })` 
-6. An `auth-listener.js` content script (injected on that page by the extension) forwards the token to the background service worker via `chrome.runtime.sendMessage`
-7. The background stores the token in `chrome.storage.local` with a 1-hour expiry
-8. The popup polls `chrome.storage.local` every 500ms (up to 60s) and updates its UI when the token appears
+- The scientific content, claims, and data were written by the researcher
+- AI was used *only* to remove words (trim) or sort a list (citation ranking)
+- No new scientific ideas were introduced by AI
+
+This gives PIs a defensible paper trail without any extra work — it's generated automatically on every API call.
 
 ---
 
 ## Known Limitations
 
-- **Institution field not populated from Google OAuth:** Google's OAuth profile does not include institution/affiliation. The `institution` field in user profiles will be blank until a profile editing UI is added. Users can update it directly in the Supabase dashboard for now.
+- **Institution not populated from Google OAuth.** Google's profile API doesn't include affiliation. The `institution` field in the PDF header will be blank until a profile-edit page is added.
 
-- **SciENcv DOM selectors may drift:** The content script's selectors for detecting textarea fields and publication list containers (`[class*="bibliography"]`, etc.) are based on current SciENcv markup. If NIH changes their DOM structure, the injection points may need to be updated.
+- **SciENcv DOM selectors may drift.** The content script targets `textarea#previewAreaMarkdown` (Personal Statement) and `div.citationUIContainer.mybib` (My Bibliography). If NIH restructures those pages, selectors will need updating.
 
-- **PDF export requires Node.js runtime:** The `/api/audit/export` route uses `@react-pdf/renderer` which requires the Node.js runtime (not Edge). This is the Next.js App Router default, but note that this route cannot be moved to the Edge Runtime.
+- **Citation ranker requires visible PMIDs.** The highlighter matches `PMID: XXXXXXXX` patterns in the rendered list. Papers without a visible PMID in the DOM won't be highlighted (though they're still returned in the ranked list panel).
 
-- **Citation selector requires PMID in the page text:** The citation highlighting logic works by matching `PMID: XXXXXXXX` patterns in the DOM. Publications without visible PMIDs will receive a randomly-generated local ID and cannot be reliably highlighted after selection.
+- **PDF export uses Node.js runtime only.** The `@react-pdf/renderer` package requires the Node.js runtime. The export route cannot be moved to Edge Runtime.
+
+---
+
+## Tech Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Database + Auth | Supabase (Postgres + Google OAuth) |
+| Styling | Tailwind CSS |
+| AI Model | `claude-sonnet-4-20250514` |
+| PDF Generation | `@react-pdf/renderer` |
+| Extension | Chrome MV3, vanilla JS |
+| Deployment | Vercel |
+
+---
+
+*Built for university researchers navigating NIH grant season.*
