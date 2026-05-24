@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrantAssistant — User Guide</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1e2a3a;
+      background: #f8f9fb;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #1a2540 0%, #2d3f6b 60%, #3d5a9e 100%);
+      color: #fff;
+      padding: 72px 0 64px;
+      text-align: center;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .logo-icon {
+      width: 52px; height: 52px;
+      background: #4f6ef7;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    header h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.5px; }
+    header .tagline {
+      font-size: 1.15rem;
+      color: #b8c8f0;
+      margin-top: 10px;
+      max-width: 560px;
+      margin-left: auto; margin-right: auto;
+    }
+    .header-badges {
+      display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 0.85rem;
+      color: #d0dcf8;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────── */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e6ef;
+      position: sticky; top: 0; z-index: 100;
+    }
+    nav .container {
+      display: flex; gap: 0; overflow-x: auto;
+    }
+    nav a {
+      display: block;
+      padding: 14px 18px;
+      text-decoration: none;
+      color: #4f5e78;
+      font-size: 0.88rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color .15s, border-color .15s;
+    }
+    nav a:hover { color: #4f6ef7; border-bottom-color: #4f6ef7; }
+
+    /* ── Sections ─────────────────────────────────────────────────── */
+    section { padding: 64px 0; }
+    section:nth-child(even) { background: #fff; }
+    section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1a2540;
+    }
+    section .section-sub {
+      color: #5a6a82;
+      font-size: 1rem;
+      margin-bottom: 36px;
+      max-width: 620px;
+    }
+
+    /* ── Why section ──────────────────────────────────────────────── */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 8px;
+    }
+    .pain-card {
+      background: #fff;
+      border: 1px solid #e2e6ef;
+      border-radius: 12px;
+      padding: 24px 22px;
+    }
+    .pain-card .icon { font-size: 2rem; margin-bottom: 10px; }
+    .pain-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: #1a2540; }
+    .pain-card p  { font-size: 0.9rem; color: #5a6a82; line-height: 1.55; }
+
+    /* ── Step list ────────────────────────────────────────────────── */
+    .steps { list-style: none; counter-reset: step-counter; }
+    .steps li {
+      counter-increment: step-counter;
+      position: relative;
+      padding: 0 0 36px 72px;
+    }
+    .steps li::before {
+      content: counter(step-counter);
+      position: absolute; left: 0; top: 0;
+      width: 44px; height: 44px;
+      background: #4f6ef7;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .steps li::after {
+      content: '';
+      position: absolute; left: 21px; top: 44px;
+      width: 2px; height: calc(100% - 44px);
+      background: #e2e6ef;
+    }
+    .steps li:last-child::after { display: none; }
+    .steps li:last-child { padding-bottom: 0; }
+    .steps li h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; padding-top: 8px; }
+    .steps li p  { font-size: 0.95rem; color: #4f5e78; margin-bottom: 14px; }
+
+    /* ── Screenshot ───────────────────────────────────────────────── */
+    .screenshot {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #dde3f0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin: 16px 0 4px;
+    }
+    .screenshot-caption {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #8a96aa;
+      margin-bottom: 20px;
+    }
+    .screenshot-half {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .screenshot-half figure { margin: 0; }
+    .screenshot-half img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #dde3f0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .screenshot-half figcaption {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #8a96aa;
+      margin-top: 6px;
+    }
+
+    /* ── Callout boxes ────────────────────────────────────────────── */
+    .callout {
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .callout-blue  { background: #eff4ff; border-left: 4px solid #4f6ef7; color: #1a2a5e; }
+    .callout-green { background: #f0fdf4; border-left: 4px solid #22c55e; color: #14532d; }
+    .callout-amber { background: #fffbeb; border-left: 4px solid #f59e0b; color: #78350f; }
+    .callout strong { font-weight: 700; }
+
+    /* ── Feature strip ────────────────────────────────────────────── */
+    .feature-strip {
+      display: flex; gap: 16px; flex-wrap: wrap; margin: 28px 0;
+    }
+    .feature-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #eff4ff; border: 1px solid #c7d7fc;
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 0.92rem; font-weight: 600; color: #2d4baa;
+    }
+
+    /* ── Popup image ──────────────────────────────────────────────── */
+    .popup-wrap {
+      display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .popup-wrap img {
+      width: 260px; flex-shrink: 0;
+      border-radius: 12px;
+      border: 1px solid #dde3f0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .popup-wrap .popup-text { flex: 1; min-width: 220px; }
+    .popup-wrap .popup-text h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .popup-wrap .popup-text p  { font-size: 0.93rem; color: #4f5e78; margin-bottom: 10px; }
+
+    /* ── FAQ ──────────────────────────────────────────────────────── */
+    .faq-item { border-bottom: 1px solid #e2e6ef; padding: 20px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: #1a2540; }
+    .faq-item p  { font-size: 0.93rem; color: #4f5e78; line-height: 1.6; }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      background: #1a2540;
+      color: #8899bb;
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 0.88rem;
+    }
+    footer a { color: #6d8ef0; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.8rem; }
+      .screenshot-half { grid-template-columns: 1fr; }
+      .popup-wrap img { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────── -->
+<header>
+  <div class="container">
+    <div class="logo-row">
+      <div class="logo-icon">📋</div>
+      <h1>GrantAssistant</h1>
+    </div>
+    <p class="tagline">
+      AI-powered text trimming and citation ranking for NIH SciENcv —
+      with a built-in compliance audit trail.
+    </p>
+    <div class="header-badges">
+      <span class="badge">🆓 Free</span>
+      <span class="badge">🔒 NIH Compliant</span>
+      <span class="badge">⚡ Works inside SciENcv</span>
+      <span class="badge">📄 Audit PDF included</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <a href="#why">Why GrantAssistant</a>
+    <a href="#install">Installation</a>
+    <a href="#signin">Sign In</a>
+    <a href="#trim">Text Trimming</a>
+    <a href="#citations">Citation Ranker</a>
+    <a href="#audit">Audit Trail</a>
+    <a href="#faq">FAQ</a>
+  </div>
+</nav>
+
+<!-- ── WHY ─────────────────────────────────────────────────────────── -->
+<section id="why">
+  <div class="container">
+    <h2>Built for researchers preparing NIH grants</h2>
+    <p class="section-sub">
+      SciENcv enforces strict formatting rules. GrantAssistant handles the tedious
+      parts so you can focus on the science.
+    </p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="icon">✂️</div>
+        <h3>Character limits are brutal</h3>
+        <p>The Personal Statement allows only 2,500 characters. Cutting your own writing
+           without losing key scientific claims takes hours.</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon">📚</div>
+        <h3>Choosing 4 citations is hard</h3>
+        <p>Each Contribution to Science entry allows up to 4 citations.
+           Picking the most relevant ones from dozens of papers is subjective and time-consuming.</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon">📝</div>
+        <h3>NIH requires AI disclosure</h3>
+        <p>If you use any AI assistance, NIH expects documentation.
+           GrantAssistant generates a compliance PDF automatically — no extra work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INSTALL ──────────────────────────────────────────────────────── -->
+<section id="install">
+  <div class="container">
+    <h2>Installing the Chrome Extension</h2>
+    <p class="section-sub">
+      GrantAssistant installs in under two minutes directly from the Chrome Web Store.
+      No configuration or sign-in needed before install.
+    </p>
+
+    <ul class="steps">
+
+      <li>
+        <h3>Open the Chrome Web Store</h3>
+        <p>
+          Go to
+          <a href="https://chromewebstore.google.com" target="_blank">chromewebstore.google.com</a>
+          in Chrome. In the search box, type <strong>GrantAssistant</strong> and press Enter.
+        </p>
+        <img class="screenshot" src="screenshots/install-step1-search.png"
+             alt="Typing GrantAssistant into the Chrome Web Store search box" />
+        <p class="screenshot-caption">Type "GrantAssistant" in the search bar</p>
+      </li>
+
+      <li>
+        <h3>Find the extension and click "Add to Chrome"</h3>
+        <p>
+          Select <strong>GrantAssistant — SciENcv Assistant</strong> from the results.
+          On the extension detail page, click the blue <strong>Add to Chrome</strong> button.
+        </p>
+        <img class="screenshot" src="screenshots/install-step2-add.png"
+             alt="GrantAssistant listing on the Chrome Web Store with Add to Chrome button" />
+        <p class="screenshot-caption">Click "Add to Chrome" on the extension listing</p>
+      </li>
+
+      <li>
+        <h3>Confirm the installation</h3>
+        <p>
+          Chrome will show a permissions dialog. Click <strong>Add extension</strong>
+          to confirm. The extension only requests access to <code>ncbi.nlm.nih.gov</code>
+          — it cannot read any other website.
+        </p>
+        <img class="screenshot" src="screenshots/install-step3-confirm.png"
+             alt="Chrome permissions dialog asking to confirm adding GrantAssistant" />
+        <p class="screenshot-caption">Click "Add extension" to confirm — takes only a moment</p>
+      </li>
+
+      <li>
+        <h3>The GrantAssistant icon appears in your toolbar</h3>
+        <p>
+          After installation, you'll see the GrantAssistant icon (📋) in the Chrome toolbar.
+          If you don't see it, click the puzzle-piece <strong>Extensions</strong> icon and
+          pin GrantAssistant to keep it visible.
+        </p>
+        <div class="callout callout-green">
+          <strong>✓ Done!</strong> The extension is installed. Next, sign in with your
+          Google account to activate the AI features.
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</section>
+
+<!-- ── SIGN IN ──────────────────────────────────────────────────────── -->
+<section id="signin">
+  <div class="container">
+    <h2>Signing In</h2>
+    <p class="section-sub">
+      Sign in once with Google. GrantAssistant remembers your session for 1 hour —
+      you won't need to sign in again during a working session.
+    </p>
+
+    <div class="popup-wrap">
+      <img src="screenshots/signin-popup.png" alt="GrantAssistant extension popup showing Sign in with Google button" />
+      <div class="popup-text">
+        <h3>Click the toolbar icon to open the popup</h3>
+        <p>Click the GrantAssistant icon (📋) in your Chrome toolbar. The popup shows
+           your current sign-in status.</p>
+
+        <h3>Click "Sign in with Google"</h3>
+        <p>A new tab opens with the Google OAuth sign-in flow. Sign in with any Google
+           account — no university email required.</p>
+
+        <h3>The popup updates automatically</h3>
+        <p>Once you complete sign-in, the tab closes and the popup shows your email address.
+           You're ready to use GrantAssistant on any SciENcv page.</p>
+
+        <div class="callout callout-blue" style="margin-top:16px;">
+          <strong>Privacy:</strong> GrantAssistant stores only a short-lived session token
+          (1-hour expiry). Your Google credentials and API keys are never stored in the extension.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRIM ─────────────────────────────────────────────────────────── -->
+<section id="trim">
+  <div class="container">
+    <h2>⚡ Text Trimming</h2>
+    <p class="section-sub">
+      When your Personal Statement or Contribution to Science description is over the
+      character limit, GrantAssistant condenses it — removing redundant phrasing while
+      preserving every scientific claim, number, and citation.
+    </p>
+
+    <div class="feature-strip">
+      <span class="feature-chip">⚡ Trim — condense to fit the limit</span>
+      <span class="feature-chip">⎘ Copy — copy text to clipboard</span>
+      <span class="feature-chip">↩ Revert — undo the trim instantly</span>
+    </div>
+
+    <ul class="steps">
+      <li>
+        <h3>Open your SciENcv biosketch and click "edit" on any section</h3>
+        <p>
+          Navigate to your biosketch at
+          <a href="https://www.ncbi.nlm.nih.gov/myncbi/" target="_blank">ncbi.nlm.nih.gov/myncbi</a>.
+          Click <strong>edit</strong> next to the Personal Statement or any
+          Contribution to Science description.
+        </p>
+      </li>
+      <li>
+        <h3>The Trim toolbar appears below the text area</h3>
+        <p>
+          As soon as the text area becomes visible, GrantAssistant injects a toolbar with
+          three buttons: <strong>⚡ Trim</strong>, <strong>⎘ Copy</strong>,
+          and <strong>↩ Revert</strong>.
+        </p>
+        <img class="screenshot" src="screenshots/trim-before.png"
+             alt="Personal Statement field in SciENcv with the GrantAssistant Trim toolbar visible" />
+        <p class="screenshot-caption">The Trim toolbar appears automatically below any editable text field</p>
+      </li>
+      <li>
+        <h3>Click ⚡ Trim</h3>
+        <p>
+          GrantAssistant sends your text to the AI, which removes words to bring it
+          under the character limit. The text in the field is replaced in place.
+          A success tooltip shows exactly how many characters were removed.
+        </p>
+        <img class="screenshot" src="screenshots/trim-after.png"
+             alt="Personal Statement after trimming — tooltip shows 7678 to 822 characters" />
+        <p class="screenshot-caption">After trimming — the tooltip confirms the reduction (here: 7,678 → 822 chars) and Revert activates</p>
+
+        <div class="callout callout-amber" style="margin-top: 16px;">
+          <strong>Important:</strong> Always review the trimmed text before saving.
+          AI is excellent at removing filler but you know your science best.
+          Use <strong>↩ Revert</strong> to restore the original instantly if needed.
+        </div>
+      </li>
+      <li>
+        <h3>Save in SciENcv as usual</h3>
+        <p>
+          Click the green ✔ check mark in SciENcv to save the field. The trim action
+          is automatically logged to your audit trail.
+        </p>
+      </li>
+    </ul>
+
+    <div class="callout callout-green">
+      <strong>What the AI does and doesn't change:</strong><br />
+      ✓ Removes wordy phrases, hedges, and redundant transitions<br />
+      ✓ Shortens multi-clause sentences<br />
+      ✗ Never changes a number, p-value, gene name, drug name, or citation<br />
+      ✗ Never introduces a new claim or idea
+    </div>
+  </div>
+</section>
+
+<!-- ── CITATIONS ─────────────────────────────────────────────────────── -->
+<section id="citations">
+  <div class="container">
+    <h2>🎯 Citation Ranker</h2>
+    <p class="section-sub">
+      Each Contribution to Science entry in Section C allows up to four citations.
+      Given your grant title, GrantAssistant ranks your My Bibliography papers and
+      highlights the best four — with a plain-English relevance reason for each.
+    </p>
+
+    <ul class="steps">
+      <li>
+        <h3>Go to Section C — Contribution to Science</h3>
+        <p>
+          Scroll to the <strong>C. Contribution to Science</strong> section of your
+          biosketch. The GrantAssistant citation panel appears automatically above
+          each contribution's citation list.
+        </p>
+        <img class="screenshot" src="screenshots/citations-empty.png"
+             alt="Contribution to Science section showing the GrantAssistant citation panel with empty input" />
+        <p class="screenshot-caption">The 🎯 GrantAssistant panel appears above each Contribution to Science entry</p>
+      </li>
+      <li>
+        <h3>Enter your grant title and click "Find Best 4"</h3>
+        <p>
+          Type the title of the grant you are applying for into the input box
+          (e.g. <em>"Tau phosphorylation and synaptic dysfunction in Alzheimer's disease"</em>)
+          and click <strong>Find Best 4</strong>.
+        </p>
+      </li>
+      <li>
+        <h3>Review the ranked results</h3>
+        <p>
+          GrantAssistant returns the four most relevant papers from your bibliography,
+          each with a one-sentence explanation of why it was selected. The papers are
+          also highlighted directly in your bibliography list below.
+        </p>
+        <img class="screenshot" src="screenshots/citations-results.png"
+             alt="Citation ranker showing 4 ranked papers with relevance reasons below the grant title input" />
+        <p class="screenshot-caption">Results panel showing the top 4 papers ranked by relevance to your grant title, with reasons</p>
+      </li>
+      <li>
+        <h3>Select the citations manually in SciENcv</h3>
+        <p>
+          Use GrantAssistant's ranking as your guide, then check the papers in SciENcv's
+          own citation selector and click <strong>Save citations</strong>. The ranking
+          action is logged automatically to your audit trail.
+        </p>
+        <div class="callout callout-blue">
+          <strong>No papers in My Bibliography yet?</strong> Click
+          <a href="https://www.ncbi.nlm.nih.gov/myncbi/" target="_blank">Go to My Bibliography</a>
+          to add your publications first, then return here. You can also connect your
+          ORCiD account directly from the Citations tab.
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── AUDIT ──────────────────────────────────────────────────────────── -->
+<section id="audit">
+  <div class="container">
+    <h2>📄 Compliance Audit Trail</h2>
+    <p class="section-sub">
+      Every Trim and Citation action is automatically logged. You can export individual
+      records or your full history as a signed PDF — ready to share with your grants
+      office or attach to your application.
+    </p>
+
+    <img class="screenshot" src="screenshots/dashboard.png"
+         alt="GrantAssistant dashboard showing audit records with Trim and Citation entries" />
+    <p class="screenshot-caption">The dashboard at grant-assistant-omega.vercel.app/dashboard — every action logged with one-click PDF export</p>
+
+    <div style="margin-top: 32px;">
+      <h3 style="font-size:1.1rem; margin-bottom:16px;">What each PDF certifies</h3>
+      <div class="callout callout-green">
+        <strong>For Trim actions:</strong><br />
+        "This document certifies that the scientific content, claims, citations, and
+        numerical values in the text above were authored by the researcher. AI assistance
+        was limited solely to removing words to meet a formatting character limit imposed
+        by NIH SciENcv. No new scientific ideas, claims, or data were introduced by AI."
+      </div>
+      <div class="callout callout-green" style="margin-top:12px;">
+        <strong>For Citation Ranking actions:</strong><br />
+        "The researcher selected publications from their own publication record for
+        inclusion in an NIH biosketch. AI was used only to rank relevance based on the
+        grant title provided. All listed publications are original works by the researcher."
+      </div>
+    </div>
+
+    <div class="callout callout-blue" style="margin-top: 24px;">
+      <strong>NIH NOT-OD-23-149</strong> asks researchers to acknowledge AI use in
+      grant applications. Your GrantAssistant audit PDFs serve as that documentation —
+      generated automatically, no extra work required.
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+    <p class="section-sub">Common questions from researchers.</p>
+
+    <div class="faq-item">
+      <h3>Does GrantAssistant change the scientific content of my text?</h3>
+      <p>No. The AI is instructed to remove words and shorten sentences only. It will
+         not add new claims, change statistics, rename genes, or alter citations. You
+         should always review the output before saving — use the ↩ Revert button
+         instantly if anything looks wrong.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Is this allowed under NIH policy?</h3>
+      <p>Yes, with disclosure. NIH's guidance (NOT-OD-23-149) permits AI use for
+         administrative and formatting tasks when disclosed. GrantAssistant generates
+         a compliance PDF for every action so you have that documentation ready.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Does GrantAssistant read my other browser tabs or history?</h3>
+      <p>No. The extension only injects UI on <code>ncbi.nlm.nih.gov</code> pages and
+         the GrantAssistant sign-in page. It has no access to any other website you visit.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Where is my text sent?</h3>
+      <p>Text you trim is sent to GrantAssistant's secure server (hosted on Vercel)
+         which calls the Anthropic Claude API. Your text is used only to perform the
+         trim and is stored in your audit record so you can export it. It is never
+         used to train AI models.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What if I don't have papers in My Bibliography yet?</h3>
+      <p>The citation panel will still appear. When you click Find Best 4, GrantAssistant
+         will let you know that your bibliography is empty and prompt you to add papers
+         via the link to My Bibliography. Once you add papers, come back and run the
+         ranker.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Does it work on the Contributions to Science description text as well?</h3>
+      <p>Yes. The ⚡ Trim button appears on any visible text area in SciENcv — including
+         the description field for each Contribution to Science entry when you click
+         "edit" on it.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Is GrantAssistant free?</h3>
+      <p>Yes, it is free and open source. The source code is available on
+         <a href="https://github.com/sidb5/grant-assistant" target="_blank">GitHub</a>.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <p style="margin-bottom:8px;">
+      <strong style="color:#fff;">GrantAssistant</strong> —
+      AI copilot for NIH SciENcv
+    </p>
+    <p>
+      <a href="https://grant-assistant-omega.vercel.app">Dashboard</a> &nbsp;·&nbsp;
+      <a href="https://github.com/sidb5/grant-assistant">GitHub</a> &nbsp;·&nbsp;
+      <a href="https://chromewebstore.google.com">Chrome Web Store</a>
+    </p>
+    <p style="margin-top:12px; font-size:0.8rem; color:#5a6e99;">
+      Built for university researchers navigating NIH grant season.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
