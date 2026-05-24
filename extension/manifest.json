@@ -3,7 +3,7 @@
   "name": "GrantAssistant — SciENcv Assistant",
   "version": "1.0.0",
   "description": "AI-powered trimming and citation selection for NIH SciENcv. Compliance audit trail included.",
-  "permissions": ["storage", "activeTab", "tabs"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "https://www.ncbi.nlm.nih.gov/*",
     "https://grant-assistant-omega.vercel.app/*"
