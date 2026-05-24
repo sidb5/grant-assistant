@@ -34,13 +34,19 @@ export async function middleware(request: NextRequest) {
   // verification before touching any data.
   const { data: { session } } = await supabase.auth.getSession()
 
+  // Unauthenticated users trying to reach the dashboard → landing page
   if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Authenticated users visiting the landing page → skip straight to dashboard
+  if (session && request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return response
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/', '/dashboard/:path*'],
 }
