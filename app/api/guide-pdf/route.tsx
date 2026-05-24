@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-
-import { Document, Page, Text, View, Image, StyleSheet, renderToBuffer, Link } from '@react-pdf/renderer'
+import { Document, Page, Text, View, Image, StyleSheet, renderToBuffer } from '@react-pdf/renderer'
 import React from 'react'
 import path from 'path'
+import fs from 'fs'
 
 // ── Styles ───────────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
@@ -68,13 +68,35 @@ const S = StyleSheet.create({
   footerTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#ffffff', textAlign: 'center', marginBottom: 4 },
 })
 
-// ── Resolve absolute path for logo/screenshot images ─────────────────────────
-function pub(filename: string) {
-  return path.join(process.cwd(), 'public', filename)
+// ── Image loader — returns a base64 data URI so @react-pdf can render it ──────
+// Using file paths directly is unreliable in the Next.js runtime; base64 is not.
+function img(filename: string): string {
+  const abs = path.join(process.cwd(), 'public', filename)
+  const buf = fs.readFileSync(abs)
+  return `data:image/png;base64,${buf.toString('base64')}`
+}
+
+// Pre-load all images once at request time (not at module load time)
+function loadImages() {
+  return {
+    ucsd:     img('logos/uc-san-diego.png'),
+    ucsf:     img('logos/uc-san-francisco.png'),
+    uci:      img('logos/uc-irvine.png'),
+    salk:     img('logos/salk-institute.png'),
+    sbp:      img('logos/sanford-burnham.png'),
+    step1:    img('screenshots/install-step1-search.png'),
+    step2:    img('screenshots/install-step2-add.png'),
+    step3:    img('screenshots/install-step3-confirm.png'),
+    trimBefore: img('screenshots/trim-before.png'),
+    trimAfter:  img('screenshots/trim-after.png'),
+    citEmpty:   img('screenshots/citations-empty.png'),
+    citResult:  img('screenshots/citations-results.png'),
+    dashboard:  img('screenshots/dashboard.png'),
+  }
 }
 
 // ── PDF Document ─────────────────────────────────────────────────────────────
-function GuidePDF() {
+function GuidePDF({ imgs }: { imgs: ReturnType<typeof loadImages> }) {
   return (
     <Document title="GrantAssistant — User Guide" author="GrantAssistant">
 
@@ -97,11 +119,11 @@ function GuidePDF() {
         <View style={S.proofSection}>
           <Text style={S.proofLabel}>Trusted by researchers at leading institutions</Text>
           <View style={S.proofLogos}>
-            <Image style={S.proofLogo} src={pub('logos/uc-san-diego.png')} />
-            <Image style={S.proofLogo} src={pub('logos/uc-san-francisco.png')} />
-            <Image style={S.proofLogo} src={pub('logos/uc-irvine.png')} />
-            <Image style={S.proofLogo} src={pub('logos/salk-institute.png')} />
-            <Image style={S.proofLogo} src={pub('logos/sanford-burnham.png')} />
+            <Image style={S.proofLogo} src={imgs.ucsd} />
+            <Image style={S.proofLogo} src={imgs.ucsf} />
+            <Image style={S.proofLogo} src={imgs.uci} />
+            <Image style={S.proofLogo} src={imgs.salk} />
+            <Image style={S.proofLogo} src={imgs.sbp} />
           </View>
           <Text style={S.proofText}>
             Researchers across Southern California's leading biomedical institutions use GrantAssistant
@@ -158,7 +180,7 @@ function GuidePDF() {
               <View style={S.stepBody}>
                 <Text style={S.h3}>Open the Chrome Web Store</Text>
                 <Text style={S.p}>Go to chromewebstore.google.com in Chrome. Type "GrantAssistant" in the search box and press Enter.</Text>
-                <Image style={S.screenshot} src={pub('screenshots/install-step1-search.png')} />
+                <Image style={S.screenshot} src={imgs.step1} />
               </View>
             </View>
 
@@ -167,7 +189,7 @@ function GuidePDF() {
               <View style={S.stepBody}>
                 <Text style={S.h3}>Click "Add to Chrome"</Text>
                 <Text style={S.p}>Select GrantAssistant — SciENcv Assistant from results and click the blue Add to Chrome button.</Text>
-                <Image style={S.screenshot} src={pub('screenshots/install-step2-add.png')} />
+                <Image style={S.screenshot} src={imgs.step2} />
               </View>
             </View>
 
@@ -176,7 +198,7 @@ function GuidePDF() {
               <View style={S.stepBody}>
                 <Text style={S.h3}>Confirm &amp; Sign In</Text>
                 <Text style={S.p}>Click "Add extension" in the confirmation dialog. Then click the GrantAssistant icon in your toolbar and sign in with Google.</Text>
-                <Image style={S.screenshot} src={pub('screenshots/install-step3-confirm.png')} />
+                <Image style={S.screenshot} src={imgs.step3} />
               </View>
             </View>
 
@@ -219,7 +241,7 @@ function GuidePDF() {
               <Text style={S.stepNum}>2</Text>
               <View style={S.stepBody}>
                 <Text style={S.h3}>The Trim toolbar appears below the text area</Text>
-                <Image style={S.screenshot} src={pub('screenshots/trim-before.png')} />
+                <Image style={S.screenshot} src={imgs.trimBefore} />
                 <Text style={S.caption}>The Trim toolbar appears automatically below any editable text field</Text>
               </View>
             </View>
@@ -228,7 +250,7 @@ function GuidePDF() {
               <Text style={S.stepNum}>3</Text>
               <View style={S.stepBody}>
                 <Text style={S.h3}>Click ⚡ Trim and review the result</Text>
-                <Image style={S.screenshot} src={pub('screenshots/trim-after.png')} />
+                <Image style={S.screenshot} src={imgs.trimAfter} />
                 <Text style={S.caption}>Success tooltip confirms the character reduction — ↩ Revert activates in case you need to undo</Text>
               </View>
             </View>
@@ -264,10 +286,10 @@ function GuidePDF() {
             <Text style={S.h2}>🎯 Citation Ranker</Text>
             <Text style={S.sub}>Each Contribution to Science entry allows up to four citations. Given your grant title, GrantAssistant ranks your My Bibliography papers and highlights the best four with relevance reasons.</Text>
 
-            <Image style={S.screenshot} src={pub('screenshots/citations-empty.png')} />
+            <Image style={S.screenshot} src={imgs.citEmpty} />
             <Text style={S.caption}>The GrantAssistant panel appears above each Contribution to Science entry</Text>
 
-            <Image style={S.screenshot} src={pub('screenshots/citations-results.png')} />
+            <Image style={S.screenshot} src={imgs.citResult} />
             <Text style={S.caption}>Top 4 papers ranked by relevance with one-sentence explanations for each</Text>
 
             <View style={S.calloutBlue}>
@@ -283,7 +305,7 @@ function GuidePDF() {
             <Text style={S.h2}>📄 Compliance Audit Trail</Text>
             <Text style={S.sub}>Every Trim and Citation action is automatically logged. Export signed PDFs for your grants office.</Text>
 
-            <Image style={S.screenshot} src={pub('screenshots/dashboard.png')} />
+            <Image style={S.screenshot} src={imgs.dashboard} />
             <Text style={S.caption}>The dashboard — every action logged with one-click PDF export</Text>
 
             <View style={S.calloutBlue}>
@@ -311,7 +333,8 @@ function GuidePDF() {
 // ── Route handler ─────────────────────────────────────────────────────────────
 export async function GET() {
   try {
-    const buffer = await renderToBuffer(<GuidePDF />)
+    const imgs = loadImages()
+    const buffer = await renderToBuffer(<GuidePDF imgs={imgs} />)
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
