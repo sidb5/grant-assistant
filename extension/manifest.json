@@ -5,7 +5,8 @@
   "description": "AI-powered trimming and citation selection for NIH SciENcv. Compliance audit trail included.",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "https://www.ncbi.nlm.nih.gov/*",
+    "https://www.ncbi.nlm.nih.gov/labs/sciencv/*",
+    "https://www.ncbi.nlm.nih.gov/myncbi/*",
     "https://grant-assistant-omega.vercel.app/*"
   ],
   "icons": {
