@@ -156,6 +156,18 @@ export default function LandingPage() {
             Add to Chrome — Free
           </a>
           <SignInButton />
+          <a
+            href="/api/guide-pdf"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              background: 'rgba(255,255,255,0.1)', color: '#d0dcf8',
+              padding: '12px 28px', borderRadius: 8, fontWeight: 600,
+              fontSize: '0.95rem', textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.2)',
+            }}
+          >
+            ⬇ Download PDF Guide
+          </a>
         </div>
 
         {/* Badges */}
@@ -168,6 +180,32 @@ export default function LandingPage() {
           ))}
         </div>
       </header>
+
+      {/* ── SOCIAL PROOF ────────────────────────────────────────────────────── */}
+      <section style={{ background: '#fff', padding: '48px 24px', borderBottom: '1px solid #e2e6ef' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.12em', color: '#8a96aa', textTransform: 'uppercase', marginBottom: 28 }}>
+            Trusted by researchers at leading institutions
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 16, alignItems: 'center', marginBottom: 28 }}>
+            {[
+              { src: '/logos/uc-san-diego.png',     alt: 'UC San Diego' },
+              { src: '/logos/uc-san-francisco.png', alt: 'UC San Francisco' },
+              { src: '/logos/uc-irvine.png',        alt: 'UC Irvine' },
+              { src: '/logos/salk-institute.png',   alt: 'Salk Institute' },
+              { src: '/logos/sanford-burnham.png',  alt: 'Sanford Burnham Prebys' },
+            ].map(({ src, alt }) => (
+              <Image key={alt} src={src} alt={alt} width={280} height={100}
+                style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #e2e6ef', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+              />
+            ))}
+          </div>
+          <p style={{ fontSize: '0.9rem', color: '#5a6a82', maxWidth: 520, margin: '0 auto' }}>
+            Researchers across Southern California's leading biomedical institutions use
+            GrantAssistant to streamline NIH biosketch preparation for R01, R21, and K-award submissions.
+          </p>
+        </div>
+      </section>
 
       {/* ── STICKY NAV ──────────────────────────────────────────────────────── */}
       <nav style={{
