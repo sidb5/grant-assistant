@@ -156,18 +156,6 @@ export default function LandingPage() {
             Add to Chrome — Free
           </a>
           <SignInButton />
-          <a
-            href="/api/guide-pdf"
-            target="_blank" rel="noopener noreferrer"
-            style={{
-              background: 'rgba(255,255,255,0.1)', color: '#d0dcf8',
-              padding: '12px 28px', borderRadius: 8, fontWeight: 600,
-              fontSize: '0.95rem', textDecoration: 'none',
-              border: '1px solid rgba(255,255,255,0.2)',
-            }}
-          >
-            ⬇ Download PDF Guide
-          </a>
         </div>
 
         {/* Badges */}
